@@ -1,0 +1,94 @@
+# Common configuration for APM2 autopilot
+# node:
+/mavros/**:
+  ros__parameters:
+    startup_px4_usb_quirk: false
+# --- system plugins ---
+# sys_status
+# /mavros/**/sys:
+#   ros__parameters:
+#     min_voltage: [10.0]          # Diagnostics min voltage, single battery assumed
+#     disable_diag: false          # Enable system status diagnostics
+#     heartbeat_rate: 1.0          # Send heartbeat rate in Hertz
+#     heartbeat_mav_type: "ONBOARD_CONTROLLER"
+#     conn_timeout: 10.0           # Heartbeat timeout in seconds
+# sys_time
+/mavros/**/time:
+  ros__parameters:
+    time_ref_source: "fcu"       # Time reference source
+    timesync_mode: MAVLINK
+    timesync_avg_alpha: 0.6      # Timesync averaging factor
+    timesync_rate: 10.0          # TIMESYNC rate in Hertz (feature disabled if 0.0)
+    system_time_rate: 1.0        # Send system time to FCU rate in Hertz (disabled if 0.0)
+    SCHED_LOOP_RATE: 100.0       # Scheduler loop rate in Hertz
+# --- mavros plugins ---
+# local_position
+# This publishes the odom -> base_link transform
+/mavros/**/local_position:
+  ros__parameters:
+    frame_id: "odom"                # Parent frame
+    tf.send: false                   # Enable TF publishing
+    tf.frame_id: "odom"             # TF parent frame
+    tf.child_frame_id: "base_link"  # TF child frame
+    tf.rate_limit: 50.0             # TF publication rate
+
+# global_position (GPS)
+# This section will handle the transform from map to odom
+/mavros/**/global_position:
+  ros__parameters:
+    frame_id: "map"               # Global coordinate frame ID
+    child_frame_id: "odom"        # Frame ID of the odometry frame
+    rot_covariance: 99999.0       # High covariance as GPS doesn't provide orientation
+    gps_uere: 1.0                 # GPS User Equivalent Range Error (UERE) in meters
+    use_relative_alt: true        # Use relative altitude for local coordinates
+    tf.send: false                 # Send the TF transform
+    tf.frame_id: "map"            # Global TF frame ID
+    tf.global_frame_id: "earth"   # TF earth frame ID (optional)
+    tf.child_frame_id: "odom"     # TF child frame ID for odometry
+    tf.rate_limit: 50.0           # TF publication rate in Hertz
+# odom (IMU + odometry)
+# This section will handle the transform from odom to base_link
+/mavros/**/odometry:
+  ros__parameters:
+    fcu.odom_parent_id_des: "odom"          # Parent frame (use PX4's odom frame)
+    fcu.odom_child_id_des: "base_link"      # Child frame (use PX4's base_link)
+    fcu.odom_use_in_ekf: false              # Don't use in EKF (PX4 handles this)
+    tf.send: false                          # Don't publish TF (PX4/Gazebo does this)
+    tf.frame_id: "odom"                     # Odometry TF frame ID
+    tf.child_frame_id: "base_link"          # Odometry child frame ID
+    tf.rate_limit: 50.0                     # TF publication rate in Hertz
+# imu_pub
+/mavros/**/imu:
+  ros__parameters:
+    frame_id: "imu_link"               # Frame ID for IMU data
+    linear_acceleration_stdev: 0.0003   # Standard deviation for linear acceleration
+    angular_velocity_stdev: 0.0003490659 # Standard deviation for angular velocity
+    orientation_stdev: 1.0              # Standard deviation for orientation
+    magnetic_stdev: 0.0                 # Standard deviation for magnetic field
+# setpoint_velocity
+/mavros/**/setpoint_velocity:
+  ros__parameters:
+    mav_frame: LOCAL_NED  # Use NED (North-East-Down) coordinate system for velocity setpoints
+# mission (waypoint handling)
+# --- mavros extras plugins (removed unnecessary plugins) ---
+# fake_gps (for testing without real GPS, if needed)
+# /mavros/**/fake_gps:
+#   ros__parameters:
+#     use_mocap: false         # Disable mocap source
+#     use_vision: false        # Disable vision source
+#     use_hil_gps: false       # Do not use HIL GPS
+#     gps_id: 4
+#     geo_origin.lat: 47.3667          # Default origin latitude [degrees]
+#     geo_origin.lon: 8.5500           # Default origin longitude [degrees]
+#     geo_origin.alt: 408.0            # Default origin altitude [meters]
+#     eph: 2.0
+#     epv: 2.0
+#     horiz_accuracy: 0.5
+#     vert_accuracy: 0.5
+#     speed_accuracy: 0.0
+#     satellites_visible: 6   # Virtual number of visible satellites
+#     fix_type: 3             # Type of GPS fix (default: 3D)
+#     tf.listen: false
+#     tf.send: false          # Do not send TF for fake GPS
+#     gps_rate: 5.0           # GPS data publishing rate
+# vim:set ts=2 sw=2 et:
