@@ -1,0 +1,21 @@
+/mavros/**:
+  ros__parameters:
+    plugin_denylist:
+      # common
+      - actuator_control
+      - ftp
+      - hil
+      # extras
+      - altitude
+      - debug_value
+      - image_pub
+      - px4flow
+      - vibration
+      - vision_speed_estimate
+      - wheel_odometry
+    plugin_allowlist:
+      - obstacle
+  
+/mavros/**/obstacle:
+  ros__parameters:
+    frame_id: "base_link"

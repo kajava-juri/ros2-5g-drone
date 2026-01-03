@@ -11,6 +11,7 @@ TGT_COMPONENT = 1
 FCU_PROTOCOL = 'v2.0'
 CONFIG_DIR = get_package_share_directory('5g_drone')
 config = os.path.join(CONFIG_DIR, 'config', 'fc_config.yaml')
+plugin_lists = os.path.join(CONFIG_DIR, 'config', 'pluginlist.yaml')
 
 
 def generate_launch_description():
@@ -22,6 +23,7 @@ def generate_launch_description():
             namespace=NAMESPACE,
             parameters=[
                 config,
+                plugin_lists,
                 {'fcu_url': FCU_URL},
                 {'gcs_url': GCS_URL},
                 {'tgt_system': TGT_SYSTEM},
@@ -31,22 +33,28 @@ def generate_launch_description():
             output='screen'
         ),
 
-        # Joystick
-        Node(
-            package='joy',
-            executable='joy_node',
-            name='joy_node'
-        ),
-
-        # Joystick to velocity
         Node(
             package='5g_drone',
-            executable='joystick_offb',
-            name='joystick_control',
-            remappings=[
-                ('/joystick/cmd_vel', '/desired_velocity')
-            ]
+            executable='obstacle_to_scan',
+            name='obstacle_to_scan'
         ),
+
+        # # Joystick
+        # Node(
+        #     package='joy',
+        #     executable='joy_node',
+        #     name='joy_node'
+        # ),
+
+        # # Joystick to velocity
+        # Node(
+        #     package='5g_drone',
+        #     executable='joystick_offb',
+        #     name='joystick_control',
+        #     remappings=[
+        #         ('/joystick/cmd_vel', '/desired_velocity')
+        #     ]
+        # ),
 
         # # Obstacle avoidance
         # Node(

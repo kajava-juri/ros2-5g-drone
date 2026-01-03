@@ -27,7 +27,7 @@
 /mavros/**/local_position:
   ros__parameters:
     frame_id: "odom"                # Parent frame
-    tf.send: false                   # Enable TF publishing
+    tf.send: true                   # Enable TF publishing
     tf.frame_id: "odom"             # TF parent frame
     tf.child_frame_id: "base_link"  # TF child frame
     tf.rate_limit: 50.0             # TF publication rate

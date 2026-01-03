@@ -25,6 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             'joystick_offb = 5g_drone.joystick_offb:main',
+            'obstacle_to_scan = 5g_drone.obstacle_to_scan:main',
         ],
     },
 )
