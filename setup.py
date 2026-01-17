@@ -26,6 +26,8 @@ setup(
         'console_scripts': [
             'joystick_offb = 5g_drone.joystick_offb:main',
             'obstacle_to_scan = 5g_drone.obstacle_to_scan:main',
+            'px4_localpos_to_pose = 5g_drone.px4_localpos_to_pose:main',
+            'export_cell_csv = 5g_drone.export_cell_csv:main',
         ],
     },
 )
